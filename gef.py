@@ -453,6 +453,9 @@ class Cache:
             Cache.cached_main_arena = None
             Cache.cached_heap_base = None
             Cache.cached_libc_version = None
+
+        # gdb cache
+        gdb.execute("maintenance flush dcache", to_string=True)
         return
 
 
@@ -11580,8 +11583,10 @@ def enable_phys():
     if is_qemu_system():
         response = gdb.execute("maintenance packet Qqemu.PhyMemMode:1", to_string=True, from_tty=False)
         response = gdb.execute("maintenance packet qqemu.PhyMemMode", to_string=True, from_tty=False)
+        gdb.execute("maintenance flush dcache", to_string=True)
         return 'received: "1"' in response
     elif is_vmware():
+        gdb.execute("maintenance flush dcache", to_string=True)
         gdb.execute("monitor phys", to_string=True)
         return True
 
@@ -11590,8 +11595,10 @@ def disable_phys():
     if is_qemu_system():
         response = gdb.execute("maintenance packet Qqemu.PhyMemMode:0", to_string=True, from_tty=False)
         response = gdb.execute("maintenance packet qqemu.PhyMemMode", to_string=True, from_tty=False)
+        gdb.execute("maintenance flush dcache", to_string=True)
         return 'received: "0"' in response
     elif is_vmware():
+        gdb.execute("maintenance flush dcache", to_string=True)
         gdb.execute("monitor virt", to_string=True)
         return True
 
